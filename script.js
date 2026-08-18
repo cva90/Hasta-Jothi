@@ -874,121 +874,167 @@ if (modalBook) {
        11. BOOKING FORM
     ===================================================== */
 
-    if (bookingForm) {
+   /* =====================================================
+   11. BOOKING FORM → RENDER BACKEND → MONGODB
+===================================================== */
 
-        bookingForm.addEventListener(
-            "submit",
-            event => {
+if (bookingForm) {
 
-                event.preventDefault();
+    bookingForm.addEventListener(
+        "submit",
+        async event => {
 
+            event.preventDefault();
 
-                const name =
-                    document.querySelector("#name");
+            const name =
+                document.querySelector("#name");
 
-                const email =
-                    document.querySelector("#email");
+            const email =
+                document.querySelector("#email");
 
-                const phone =
-                    document.querySelector("#phone");
+            const phone =
+                document.querySelector("#phone");
 
-                const program =
-                    document.querySelector("#program");
+            const program =
+                document.querySelector("#program");
 
-
-                let errors = [];
-
-
-                if (
-                    !name ||
-                    name.value.trim().length < 2
-                ) {
-
-                    errors.push(
-                        "Please enter your full name."
-                    );
-
-                }
+            const message =
+                document.querySelector("#message");
 
 
-                const emailPattern =
-                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            let errors = [];
 
 
-                if (
-                    !email ||
-                    !emailPattern.test(
-                        email.value.trim()
-                    )
-                ) {
+            if (
+                !name ||
+                name.value.trim().length < 2
+            ) {
 
-                    errors.push(
-                        "Please enter a valid email address."
-                    );
+                errors.push(
+                    "Please enter your full name."
+                );
 
-                }
+            }
 
 
-                if (
-                    phone &&
-                    phone.value.trim()
-                ) {
-
-                    const phoneNumber =
-                        phone.value.replace(
-                            /\D/g,
-                            ""
-                        );
+            const emailPattern =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 
-                    if (
-                        phoneNumber.length < 10
-                    ) {
+            if (
+                !email ||
+                !emailPattern.test(
+                    email.value.trim()
+                )
+            ) {
 
-                        errors.push(
-                            "Please enter a valid phone number."
-                        );
+                errors.push(
+                    "Please enter a valid email address."
+                );
 
+            }
+
+
+            if (
+                !program ||
+                !program.value
+            ) {
+
+                errors.push(
+                    "Please select a program."
+                );
+
+            }
+
+
+            if (errors.length > 0) {
+
+                alert(errors.join("\n"));
+
+                return;
+
+            }
+
+
+            const bookingData = {
+
+                name: name.value.trim(),
+
+                email: email.value.trim(),
+
+                phone: phone
+                    ? phone.value.trim()
+                    : "",
+
+                program: program.value,
+
+                message: message
+                    ? message.value.trim()
+                    : ""
+
+            };
+
+
+            try {
+
+                const response = await fetch(
+                    "https://hasta-jothi.onrender.com/api/bookings",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify(
+                            bookingData
+                        )
                     }
-
-                }
-
-
-                if (
-                    !program ||
-                    !program.value
-                ) {
-
-                    errors.push(
-                        "Please select a program."
-                    );
-
-                }
-
-
-                if (errors.length > 0) {
-
-                    alert(
-                        errors.join("\n")
-                    );
-
-                    return;
-
-                }
-
-
-                alert(
-                    "Thank you! Your booking request has been received."
                 );
 
 
-                bookingForm.reset();
+                const result =
+                    await response.json();
+
+
+                if (
+                    response.ok &&
+                    result.success
+                ) {
+
+                    alert(
+                        "Booking saved successfully! 🍃"
+                    );
+
+                    bookingForm.reset();
+
+                } else {
+
+                    alert(
+                        result.message ||
+                        "Booking failed. Please try again."
+                    );
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Booking error:",
+                    error
+                );
+
+                alert(
+                    "Unable to connect to the server. Please try again."
+                );
 
             }
-        );
 
-    }
+        }
+    );
 
+}
 
     /* =====================================================
        12. ESCAPE KEY
