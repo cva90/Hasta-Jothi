@@ -874,8 +874,8 @@ if (modalBook) {
        11. BOOKING FORM
     ===================================================== */
 
-   /* =====================================================
-   11. BOOKING FORM → RENDER BACKEND → MONGODB
+ /* =====================================================
+   BOOKING FORM → RENDER BACKEND → MONGODB
 ===================================================== */
 
 if (bookingForm) {
@@ -885,6 +885,7 @@ if (bookingForm) {
         async event => {
 
             event.preventDefault();
+
 
             const name =
                 document.querySelector("#name");
@@ -902,7 +903,13 @@ if (bookingForm) {
                 document.querySelector("#message");
 
 
-            let errors = [];
+            const submitButton =
+                bookingForm.querySelector(
+                    'button[type="submit"]'
+                );
+
+
+            const errors = [];
 
 
             if (
@@ -949,7 +956,9 @@ if (bookingForm) {
 
             if (errors.length > 0) {
 
-                alert(errors.join("\n"));
+                alert(
+                    errors.join("\n")
+                );
 
                 return;
 
@@ -958,40 +967,56 @@ if (bookingForm) {
 
             const bookingData = {
 
-                name: name.value.trim(),
+                name:
+                    name.value.trim(),
 
-                email: email.value.trim(),
+                email:
+                    email.value.trim(),
 
-                phone: phone
-                    ? phone.value.trim()
-                    : "",
+                phone:
+                    phone
+                        ? phone.value.trim()
+                        : "",
 
-                program: program.value,
+                program:
+                    program.value,
 
-                message: message
-                    ? message.value.trim()
-                    : ""
+                message:
+                    message
+                        ? message.value.trim()
+                        : ""
 
             };
 
 
             try {
 
-                const response = await fetch(
-                    "https://hasta-jothi.onrender.com/api/bookings",
-                    {
-                        method: "POST",
+                if (submitButton) {
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
+                    submitButton.disabled = true;
 
-                        body: JSON.stringify(
-                            bookingData
-                        )
-                    }
-                );
+                    submitButton.textContent =
+                        "BOOKING...";
+
+                }
+
+
+                const response =
+                    await fetch(
+                        "https://hasta-jothi.onrender.com/api/bookings",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify(
+                                bookingData
+                            )
+                        }
+                    );
 
 
                 const result =
@@ -1028,6 +1053,17 @@ if (bookingForm) {
                 alert(
                     "Unable to connect to the server. Please try again."
                 );
+
+            } finally {
+
+                if (submitButton) {
+
+                    submitButton.disabled = false;
+
+                    submitButton.textContent =
+                        "BOOK NOW";
+
+                }
 
             }
 
