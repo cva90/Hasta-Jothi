@@ -26,10 +26,19 @@ app.use(express.json());
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
-        console.log("MongoDB connected successfully! 🍃");
+
+        console.log(
+            "MongoDB connected successfully! 🍃"
+        );
+
     })
     .catch((error) => {
-        console.error("MongoDB connection error:", error);
+
+        console.error(
+            "MongoDB connection error:",
+            error
+        );
+
     });
 
 
@@ -37,37 +46,43 @@ mongoose.connect(process.env.MONGODB_URI)
    BOOKING SCHEMA
 ========================================= */
 
-const bookingSchema = new mongoose.Schema(
-    {
-        name: {
-            type: String,
-            required: true
-        },
+const bookingSchema = new mongoose.Schema({
 
-        email: {
-            type: String,
-            required: true
-        },
+    name: {
+        type: String,
+        required: true,
+        trim: true
+    },
 
-        phone: {
-            type: String
-        },
+    email: {
+        type: String,
+        required: true,
+        trim: true,
+        lowercase: true
+    },
 
-        program: {
-            type: String,
-            required: true
-        },
+    phone: {
+        type: String,
+        trim: true
+    },
 
-        message: {
-            type: String
-        },
+    program: {
+        type: String,
+        required: true,
+        trim: true
+    },
 
-        createdAt: {
-            type: Date,
-            default: Date.now
-        }
+    message: {
+        type: String,
+        trim: true
+    },
+
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
-);
+
+});
 
 
 /* =========================================
@@ -86,7 +101,9 @@ const Booking = mongoose.model(
 
 app.get("/", (req, res) => {
 
-    res.send("Hasta Jothi Backend is running! 🍃");
+    res.send(
+        "Hasta Jothi Backend is running! 🍃"
+    );
 
 });
 
@@ -95,136 +112,146 @@ app.get("/", (req, res) => {
    CREATE BOOKING
 ========================================= */
 
-app.post("/api/bookings", async (req, res) => {
+app.post(
+    "/api/bookings",
+    async (req, res) => {
 
-    /* =========================================
-   GET ALL BOOKINGS
-========================================= */
+        try {
 
-app.get("/api/bookings", async (req, res) => {
-
-    try {
-
-        const bookings =
-            await Booking.find()
-                .sort({ createdAt: -1 });
-
-
-        res.status(200).json({
-
-            success: true,
-
-            bookings: bookings
-
-        });
-
-    } catch (error) {
-
-        console.error(
-            "Error fetching bookings:",
-            error
-        );
+            const {
+                name,
+                email,
+                phone,
+                program,
+                message
+            } = req.body;
 
 
-        res.status(500).json({
+            if (!name || !email || !program) {
 
-            success: false,
+                return res.status(400).json({
 
-            message:
-                "Unable to fetch bookings."
+                    success: false,
 
-        });
+                    message:
+                        "Name, email and program are required."
 
-    }
+                });
 
-});
-
-    try {
-
-        const {
-            name,
-            email,
-            phone,
-            program,
-            message
-        } = req.body;
+            }
 
 
-        const newBooking = new Booking({
-            name,
-            email,
-            phone,
-            program,
-            message
-        });
+            const newBooking = new Booking({
+
+                name,
+                email,
+                phone,
+                program,
+                message
+
+            });
 
 
-        await newBooking.save();
+            await newBooking.save();
 
 
-        console.log("New booking saved:", newBooking);
+            console.log(
+                "New booking saved:",
+                newBooking
+            );
 
 
-        res.status(201).json({
-            success: true,
-            message: "Booking saved successfully!"
-        });
+            res.status(201).json({
 
-    } catch (error) {
+                success: true,
 
-        console.error("Booking error:", error);
+                message:
+                    "Booking saved successfully!"
+
+            });
+
+        } catch (error) {
+
+            console.error(
+                "Booking error:",
+                error
+            );
 
 
-        res.status(500).json({
-            success: false,
-            message: "Unable to save booking."
-        });
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Unable to save booking."
+
+            });
+
+        }
 
     }
+);
 
-});
 
 /* =========================================
    GET ALL BOOKINGS
 ========================================= */
 
-app.get("/api/bookings", async (req, res) => {
+app.get(
+    "/api/bookings",
+    async (req, res) => {
 
-    try {
+        try {
 
-        const bookings =
-            await Booking.find()
-                .sort({ createdAt: -1 });
+            const bookings =
+                await Booking.find()
+                    .sort({
+                        createdAt: -1
+                    });
 
-        res.status(200).json({
-            success: true,
-            bookings: bookings
-        });
 
-    } catch (error) {
+            res.status(200).json({
 
-        console.error(
-            "Error fetching bookings:",
-            error
-        );
+                success: true,
 
-        res.status(500).json({
-            success: false,
-            message: "Unable to fetch bookings."
-        });
+                bookings: bookings
+
+            });
+
+        } catch (error) {
+
+            console.error(
+                "Error fetching bookings:",
+                error
+            );
+
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Unable to fetch bookings."
+
+            });
+
+        }
 
     }
+);
 
-});
 
 /* =========================================
    START SERVER
 ========================================= */
 
-app.listen(PORT, () => {
+app.listen(
+    PORT,
+    () => {
 
-    console.log(
-        `Hasta Jothi backend running at http://localhost:${PORT}`
-    );
+        console.log(
+            `Hasta Jothi backend running on port ${PORT}`
+        );
 
-});
+    }
+);
