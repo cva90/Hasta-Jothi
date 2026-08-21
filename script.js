@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("🌿 Hasta Jothi JavaScript loaded successfully!");
 
-
     /* =====================================================
        01. ELEMENTS
     ===================================================== */
@@ -18,15 +17,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const header =
         document.querySelector("header");
 
-    const bookingForm =
-        document.querySelector(".booking-form");
-
     const themeToggle =
         document.querySelector(".theme-toggle");
 
+    const bookingForm =
+        document.querySelector(".booking-form");
+
 
     /* =====================================================
-       02. MOBILE MENU
+       02. MOBILE NAVIGATION
     ===================================================== */
 
     if (menuToggle && navLinks) {
@@ -60,6 +59,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 menuToggle.setAttribute(
                     "aria-expanded",
                     "false"
+                );
+
+                menuToggle.setAttribute(
+                    "aria-label",
+                    "Open navigation menu"
                 );
 
             });
@@ -106,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       04. HEADER SCROLL
+       04. HEADER SCROLL EFFECT
     ===================================================== */
 
     function updateHeader() {
@@ -116,12 +120,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (window.scrollY > 80) {
+
             header.classList.add("scrolled");
+
         } else {
+
             header.classList.remove("scrolled");
+
         }
 
     }
+
 
     window.addEventListener(
         "scroll",
@@ -142,60 +151,10 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.getItem("hastaJothiTheme");
 
 
-        /* Load saved theme */
-
-        if (savedTheme === "dark") {
-
-            document.body.classList.add("dark-mode");
-
-            themeToggle.textContent = "☀️";
-
-            themeToggle.setAttribute(
-                "aria-label",
-                "Switch to light mode"
-            );
-
-            themeToggle.setAttribute(
-                "aria-pressed",
-                "true"
-            );
-
-        } else {
-
-            document.body.classList.remove("dark-mode");
-
-            themeToggle.textContent = "🌙";
-
-            themeToggle.setAttribute(
-                "aria-label",
-                "Switch to dark mode"
-            );
-
-            themeToggle.setAttribute(
-                "aria-pressed",
-                "false"
-            );
-
-        }
-
-
-        /* Toggle theme */
-
-        themeToggle.addEventListener("click", () => {
-
-            const isDark =
-                document.body.classList.toggle("dark-mode");
-
-
-            localStorage.setItem(
-                "hastaJothiTheme",
-                isDark ? "dark" : "light"
-            );
-
+        function updateThemeButton(isDark) {
 
             themeToggle.textContent =
                 isDark ? "☀️" : "🌙";
-
 
             themeToggle.setAttribute(
                 "aria-label",
@@ -204,13 +163,47 @@ document.addEventListener("DOMContentLoaded", () => {
                     : "Switch to dark mode"
             );
 
-
             themeToggle.setAttribute(
                 "aria-pressed",
                 String(isDark)
             );
 
-        });
+        }
+
+
+        if (savedTheme === "dark") {
+
+            document.body.classList.add("dark-mode");
+
+            updateThemeButton(true);
+
+        } else {
+
+            document.body.classList.remove("dark-mode");
+
+            updateThemeButton(false);
+
+        }
+
+
+        themeToggle.addEventListener(
+            "click",
+            () => {
+
+                const isDark =
+                    document.body.classList.toggle(
+                        "dark-mode"
+                    );
+
+                localStorage.setItem(
+                    "hastaJothiTheme",
+                    isDark ? "dark" : "light"
+                );
+
+                updateThemeButton(isDark);
+
+            }
+        );
 
     }
 
@@ -226,7 +219,9 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector("#programCategory");
 
     const programCards =
-        document.querySelectorAll("#programs .card");
+        document.querySelectorAll(
+            "#programs .card"
+        );
 
     const programResult =
         document.querySelector("#programResult");
@@ -247,6 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const selectedCategory =
             programCategory.value
+                .trim()
                 .toLowerCase();
 
 
@@ -366,7 +362,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
-    if ("IntersectionObserver" in window) {
+    if (
+        "IntersectionObserver" in window &&
+        !window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches
+    ) {
 
         const revealObserver =
             new IntersectionObserver(
@@ -424,26 +425,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     faqItems.forEach(item => {
 
-        item.addEventListener("toggle", () => {
+        item.addEventListener(
+            "toggle",
+            () => {
 
-            if (!item.open) {
-                return;
-            }
-
-
-            faqItems.forEach(otherItem => {
-
-                if (otherItem !== item) {
-
-                    otherItem.removeAttribute(
-                        "open"
-                    );
-
+                if (!item.open) {
+                    return;
                 }
 
-            });
 
-        });
+                faqItems.forEach(otherItem => {
+
+                    if (otherItem !== item) {
+
+                        otherItem.removeAttribute(
+                            "open"
+                        );
+
+                    }
+
+                });
+
+            }
+        );
 
     });
 
@@ -496,6 +500,9 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
+    updateBackToTop();
+
+
     backToTop.addEventListener(
         "click",
         () => {
@@ -507,241 +514,309 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
     );
-/* =====================================================
-   10. PROGRAM DETAILS MODAL
-===================================================== */
-
-const programModal =
-    document.querySelector("#programModal");
-
-const modalClose =
-    document.querySelector("#modalClose");
-
-const modalTitle =
-    document.querySelector("#modalTitle");
-
-const modalDescription =
-    document.querySelector("#modalDescription");
-
-const modalNumber =
-    document.querySelector("#modalNumber");
-
-const modalDuration =
-    document.querySelector("#modalDuration");
-
-const modalLevel =
-    document.querySelector("#modalLevel");
-
-const modalBook =
-    document.querySelector(".modal-book");
 
 
-const programDetails = {
+    /* =====================================================
+       10. PROGRAM DETAILS MODAL
+    ===================================================== */
 
-    "Mindfulness Meditation": {
-        number: "01",
-        description:
-            "A gentle mindfulness practice that helps you focus on the present moment through awareness of thoughts, breathing and surroundings.",
-        duration: "45 Minutes",
-        level: "Beginner"
-    },
+    const programModal =
+        document.querySelector("#programModal");
 
-    "Breathing Meditation": {
-        number: "02",
-        description:
-            "A calming practice based on conscious breathing to encourage relaxation, awareness and a peaceful state of mind.",
-        duration: "30 Minutes",
-        level: "Beginner"
-    },
+    const modalClose =
+        document.querySelector("#modalClose");
 
-    "Morning Meditation": {
-        number: "03",
-        description:
-            "Start your day with quiet breathing, awareness and mindful practice to create a calm and positive mindset.",
-        duration: "30 Minutes",
-        level: "Beginner"
-    },
+    const modalTitle =
+        document.querySelector("#modalTitle");
 
-    "Stress Relief Meditation": {
-        number: "04",
-        description:
-            "A guided relaxation practice using gentle breathing and mindful awareness to create a peaceful break from daily routines.",
-        duration: "45 Minutes",
-        level: "Beginner"
-    },
+    const modalDescription =
+        document.querySelector("#modalDescription");
 
-    "Healing Sessions": {
-        number: "05",
-        description:
-            "A guided wellness session designed to encourage relaxation, self-awareness and a deeper connection with yourself.",
-        duration: "60 Minutes",
-        level: "All Levels"
-    },
+    const modalNumber =
+        document.querySelector("#modalNumber");
 
-    "Personal Wellness": {
-        number: "06",
-        description:
-            "A personal wellness practice focusing on mindful living, breathing, relaxation and connection between mind and body.",
-        duration: "60 Minutes",
-        level: "All Levels"
+    const modalDuration =
+        document.querySelector("#modalDuration");
+
+    const modalLevel =
+        document.querySelector("#modalLevel");
+
+    const modalBook =
+        document.querySelector(".modal-book");
+
+
+    const programDetails = {
+
+        "Mindfulness Meditation": {
+
+            number: "01",
+
+            description:
+                "A gentle mindfulness practice that helps you focus on the present moment through awareness of thoughts, breathing and surroundings.",
+
+            duration: "45 Minutes",
+
+            level: "Beginner"
+
+        },
+
+
+        "Breathing Meditation": {
+
+            number: "02",
+
+            description:
+                "A calming practice based on conscious breathing to encourage relaxation, awareness and a peaceful state of mind.",
+
+            duration: "30 Minutes",
+
+            level: "Beginner"
+
+        },
+
+
+        "Morning Meditation": {
+
+            number: "03",
+
+            description:
+                "Start your day with quiet breathing, awareness and mindful practice to create a calm and positive mindset.",
+
+            duration: "30 Minutes",
+
+            level: "Beginner"
+
+        },
+
+
+        "Stress Relief Meditation": {
+
+            number: "04",
+
+            description:
+                "A guided relaxation practice using gentle breathing and mindful awareness to create a peaceful break from daily routines.",
+
+            duration: "45 Minutes",
+
+            level: "Beginner"
+
+        },
+
+
+        "Healing Sessions": {
+
+            number: "05",
+
+            description:
+                "A guided wellness session designed to encourage relaxation, self-awareness and a deeper connection with yourself.",
+
+            duration: "60 Minutes",
+
+            level: "All Levels"
+
+        },
+
+
+        "Personal Wellness": {
+
+            number: "06",
+
+            description:
+                "A personal wellness practice focusing on mindful living, breathing, relaxation and connection between mind and body.",
+
+            duration: "60 Minutes",
+
+            level: "All Levels"
+
+        }
+
+    };
+
+
+    function openProgramModal(card) {
+
+        if (
+            !programModal ||
+            !modalTitle ||
+            !modalDescription
+        ) {
+            return;
+        }
+
+
+        const titleElement =
+            card.querySelector("h3");
+
+
+        if (!titleElement) {
+            return;
+        }
+
+
+        const title =
+            titleElement.textContent.trim();
+
+
+        const details =
+            programDetails[title];
+
+
+        if (!details) {
+            return;
+        }
+
+
+        modalTitle.textContent =
+            title;
+
+
+        if (modalNumber) {
+
+            modalNumber.textContent =
+                details.number;
+
+        }
+
+
+        modalDescription.textContent =
+            details.description;
+
+
+        if (modalDuration) {
+
+            modalDuration.textContent =
+                details.duration;
+
+        }
+
+
+        if (modalLevel) {
+
+            modalLevel.textContent =
+                details.level;
+
+        }
+
+
+        programModal.classList.add(
+            "active"
+        );
+
+
+        programModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+        document.body.style.overflow =
+            "hidden";
+
+
+        if (modalClose) {
+
+            modalClose.focus();
+
+        }
+
     }
 
-};
+
+    function closeProgramModal() {
+
+        if (!programModal) {
+            return;
+        }
 
 
-function openProgramModal(card) {
+        programModal.classList.remove(
+            "active"
+        );
 
-    if (!programModal) {
-        return;
+
+        programModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        document.body.style.overflow =
+            "";
+
     }
 
-    const titleElement =
-        card.querySelector("h3");
 
-    if (!titleElement) {
-        return;
-    }
+    document
+        .querySelectorAll(
+            "#programs .card-content a"
+        )
+        .forEach(button => {
 
-    const title =
-        titleElement.textContent.trim();
+            button.addEventListener(
+                "click",
+                event => {
 
-    const details =
-        programDetails[title];
+                    event.preventDefault();
 
-    if (!details) {
-        return;
-    }
 
-    modalTitle.textContent = title;
+                    const card =
+                        button.closest(".card");
 
-    modalNumber.textContent =
-        details.number;
 
-    modalDescription.textContent =
-        details.description;
+                    if (card) {
 
-    modalDuration.textContent =
-        details.duration;
+                        openProgramModal(card);
 
-    modalLevel.textContent =
-        details.level;
+                    }
 
-    programModal.classList.add("active");
+                }
+            );
 
-    programModal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
+        });
 
-    document.body.style.overflow = "hidden";
 
     if (modalClose) {
-        modalClose.focus();
+
+        modalClose.addEventListener(
+            "click",
+            closeProgramModal
+        );
+
     }
 
-}
 
+    if (programModal) {
 
-function closeProgramModal() {
-
-    if (!programModal) {
-        return;
-    }
-
-    programModal.classList.remove("active");
-
-    programModal.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-    document.body.style.overflow = "";
-
-}
-
-
-document
-    .querySelectorAll("#programs .card-content a")
-    .forEach(button => {
-
-        button.addEventListener(
+        programModal.addEventListener(
             "click",
             event => {
 
-                event.preventDefault();
+                if (
+                    event.target === programModal
+                ) {
 
-                const card =
-                    button.closest(".card");
+                    closeProgramModal();
 
-                if (card) {
-                    openProgramModal(card);
                 }
 
             }
         );
 
-    });
+    }
 
 
-if (modalClose) {
+    if (modalBook) {
 
-    modalClose.addEventListener(
-        "click",
-        closeProgramModal
-    );
-
-}
-
-
-if (programModal) {
-
-    programModal.addEventListener(
-        "click",
-        event => {
-
-            if (
-                event.target === programModal
-            ) {
-
-                closeProgramModal();
-
-            }
-
-        }
-    );
-
-}
-
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (event.key === "Escape") {
-
-            closeProgramModal();
-
-        }
+        modalBook.addEventListener(
+            "click",
+            closeProgramModal
+        );
 
     }
-);
 
-
-if (modalBook) {
-
-    modalBook.addEventListener(
-        "click",
-        () => {
-
-            closeProgramModal();
-
-        }
-    );
-
-}
 
     /* =====================================================
-       10. GALLERY LIGHTBOX
+       11. GALLERY LIGHTBOX
     ===================================================== */
 
     const galleryImages =
@@ -755,11 +830,13 @@ if (modalBook) {
         const lightbox =
             document.createElement("div");
 
+
         lightbox.className =
             "lightbox";
 
 
         lightbox.innerHTML = `
+
             <button
                 type="button"
                 class="lightbox-close"
@@ -770,6 +847,7 @@ if (modalBook) {
             <img
                 class="lightbox-image"
                 alt="">
+
         `;
 
 
@@ -790,9 +868,23 @@ if (modalBook) {
             );
 
 
+        function closeLightbox() {
+
+            lightbox.classList.remove(
+                "active"
+            );
+
+
+            document.body.style.overflow =
+                "";
+
+        }
+
+
         galleryImages.forEach(image => {
 
-            image.style.cursor = "zoom-in";
+            image.style.cursor =
+                "zoom-in";
 
 
             image.addEventListener(
@@ -800,34 +892,30 @@ if (modalBook) {
                 () => {
 
                     lightboxImage.src =
+                        image.currentSrc ||
                         image.src;
 
+
                     lightboxImage.alt =
-                        image.alt;
+                        image.alt ||
+                        "Hasta Jothi meditation image";
+
 
                     lightbox.classList.add(
                         "active"
                     );
 
+
                     document.body.style.overflow =
                         "hidden";
+
+
+                    closeButton.focus();
 
                 }
             );
 
         });
-
-
-        function closeLightbox() {
-
-            lightbox.classList.remove(
-                "active"
-            );
-
-            document.body.style.overflow =
-                "";
-
-        }
 
 
         closeButton.addEventListener(
@@ -857,7 +945,10 @@ if (modalBook) {
             event => {
 
                 if (
-                    event.key === "Escape"
+                    event.key === "Escape" &&
+                    lightbox.classList.contains(
+                        "active"
+                    )
                 ) {
 
                     closeLightbox();
@@ -871,11 +962,13 @@ if (modalBook) {
 
 
     /* =====================================================
-       11. BOOKING FORM
+       12. BOOKING FORM
+       FRONTEND → BACKEND → MONGODB
     ===================================================== */
 
- /* =====================================================
-   BOOKING FORM → RENDER BACKEND → MONGODB
+   /* =====================================================
+   12. BOOKING FORM
+   FRONTEND → RENDER BACKEND → MONGODB
 ===================================================== */
 
 if (bookingForm) {
@@ -886,47 +979,30 @@ if (bookingForm) {
 
             event.preventDefault();
 
-
-            const name =
-                document.querySelector("#name");
-
-            const email =
-                document.querySelector("#email");
-
-            const phone =
-                document.querySelector("#phone");
-
-            const program =
-                document.querySelector("#program");
-
-            const message =
-                document.querySelector("#message");
-
+            const name = document.querySelector("#name");
+            const email = document.querySelector("#email");
+            const phone = document.querySelector("#phone");
+            const program = document.querySelector("#program");
+            const message = document.querySelector("#message");
 
             const submitButton =
                 bookingForm.querySelector(
                     'button[type="submit"]'
                 );
 
-
             const errors = [];
-
 
             if (
                 !name ||
                 name.value.trim().length < 2
             ) {
-
                 errors.push(
                     "Please enter your full name."
                 );
-
             }
-
 
             const emailPattern =
                 /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 
             if (
                 !email ||
@@ -934,25 +1010,36 @@ if (bookingForm) {
                     email.value.trim()
                 )
             ) {
-
                 errors.push(
                     "Please enter a valid email address."
                 );
-
             }
 
+            if (phone) {
+
+                const phoneValue =
+                    phone.value.trim();
+
+                if (
+                    phoneValue &&
+                    !/^[0-9+\-\s()]{7,20}$/.test(
+                        phoneValue
+                    )
+                ) {
+                    errors.push(
+                        "Please enter a valid phone number."
+                    );
+                }
+            }
 
             if (
                 !program ||
-                !program.value
+                !program.value.trim()
             ) {
-
                 errors.push(
                     "Please select a program."
                 );
-
             }
-
 
             if (errors.length > 0) {
 
@@ -961,9 +1048,7 @@ if (bookingForm) {
                 );
 
                 return;
-
             }
-
 
             const bookingData = {
 
@@ -979,7 +1064,7 @@ if (bookingForm) {
                         : "",
 
                 program:
-                    program.value,
+                    program.value.trim(),
 
                 message:
                     message
@@ -988,18 +1073,18 @@ if (bookingForm) {
 
             };
 
-
             try {
 
                 if (submitButton) {
 
-                    submitButton.disabled = true;
+                    submitButton.disabled =
+                        true;
 
                     submitButton.textContent =
                         "BOOKING...";
-
                 }
 
+                /* SEND TO RENDER BACKEND */
 
                 const response =
                     await fetch(
@@ -1012,16 +1097,24 @@ if (bookingForm) {
                                     "application/json"
                             },
 
-                            body: JSON.stringify(
-                                bookingData
-                            )
+                            body:
+                                JSON.stringify(
+                                    bookingData
+                                )
                         }
                     );
 
+                let result = {};
 
-                const result =
-                    await response.json();
+                try {
 
+                    result =
+                        await response.json();
+
+                } catch {
+
+                    result = {};
+                }
 
                 if (
                     response.ok &&
@@ -1040,7 +1133,6 @@ if (bookingForm) {
                         result.message ||
                         "Booking failed. Please try again."
                     );
-
                 }
 
             } catch (error) {
@@ -1051,37 +1143,283 @@ if (bookingForm) {
                 );
 
                 alert(
-                    "Unable to connect to the server. Please try again."
+                    "Unable to connect to the booking server. Please try again."
                 );
 
             } finally {
 
                 if (submitButton) {
 
-                    submitButton.disabled = false;
+                    submitButton.disabled =
+                        false;
 
                     submitButton.textContent =
                         "BOOK NOW";
+                }
+            }
+        }
+    );
+}
+
+                /* -----------------------------------------
+                   NAME VALIDATION
+                ----------------------------------------- */
+
+                if (
+                    !name ||
+                    name.value.trim().length < 2
+                ) {
+
+                    errors.push(
+                        "Please enter your full name."
+                    );
+
+                }
+
+
+                /* -----------------------------------------
+                   EMAIL VALIDATION
+                ----------------------------------------- */
+
+                const emailPattern =
+                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+                if (
+                    !email ||
+                    !emailPattern.test(
+                        email.value.trim()
+                    )
+                ) {
+
+                    errors.push(
+                        "Please enter a valid email address."
+                    );
+
+                }
+
+
+                /* -----------------------------------------
+                   PHONE VALIDATION
+                ----------------------------------------- */
+
+                if (phone) {
+
+                    const phoneValue =
+                        phone.value.trim();
+
+
+                    if (
+                        phoneValue &&
+                        !/^[0-9+\-\s()]{7,20}$/.test(
+                            phoneValue
+                        )
+                    ) {
+
+                        errors.push(
+                            "Please enter a valid phone number."
+                        );
+
+                    }
+
+                }
+
+
+                /* -----------------------------------------
+                   PROGRAM VALIDATION
+                ----------------------------------------- */
+
+                if (
+                    !program ||
+                    !program.value.trim()
+                ) {
+
+                    errors.push(
+                        "Please select a program."
+                    );
+
+                }
+
+
+                /* -----------------------------------------
+                   SHOW VALIDATION ERRORS
+                ----------------------------------------- */
+
+                if (errors.length > 0) {
+
+                    alert(
+                        errors.join("\n")
+                    );
+
+                    return;
+
+                }
+
+
+                /* -----------------------------------------
+                   BOOKING DATA
+                ----------------------------------------- */
+
+                const bookingData = {
+
+                    name:
+                        name.value.trim(),
+
+                    email:
+                        email.value.trim(),
+
+                    phone:
+                        phone
+                            ? phone.value.trim()
+                            : "",
+
+                    program:
+                        program.value.trim(),
+
+                    message:
+                        message
+                            ? message.value.trim()
+                            : ""
+
+                };
+
+
+                try {
+
+                    /* -------------------------------------
+                       LOADING STATE
+                    ------------------------------------- */
+
+                    if (submitButton) {
+
+                        submitButton.disabled =
+                            true;
+
+                        submitButton.textContent =
+                            "BOOKING...";
+
+                    }
+
+
+                    /* -------------------------------------
+                       SEND TO BACKEND
+                    ------------------------------------- */
+
+                    const response =
+                        await fetch(
+                            "http://localhost:3000/api/bookings",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        bookingData
+                                    )
+                            }
+                        );
+
+
+                    /* -------------------------------------
+                       READ SERVER RESPONSE
+                    ------------------------------------- */
+
+                    let result = {};
+
+                    try {
+
+                        result =
+                            await response.json();
+
+                    } catch {
+
+                        result = {};
+
+                    }
+
+
+                    /* -------------------------------------
+                       SUCCESS
+                    ------------------------------------- */
+
+                    if (
+                        response.ok &&
+                        result.success
+                    ) {
+
+                        alert(
+                            "Booking saved successfully! 🍃"
+                        );
+
+
+                        bookingForm.reset();
+
+
+                    } else {
+
+                        alert(
+                            result.message ||
+                            "Booking failed. Please try again."
+                        );
+
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "Booking error:",
+                        error
+                    );
+
+
+                    alert(
+                        "Unable to connect to the server. Make sure your backend is running on localhost:3000."
+                    );
+
+                } finally {
+
+                    /* -------------------------------------
+                       RESTORE BUTTON
+                    ------------------------------------- */
+
+                    if (submitButton) {
+
+                        submitButton.disabled =
+                            false;
+
+                        submitButton.textContent =
+                            "BOOK NOW";
+
+                    }
 
                 }
 
             }
+        );
 
-        }
-    );
+    }
 
-}
 
     /* =====================================================
-       12. ESCAPE KEY
+       13. GLOBAL ESCAPE KEY
     ===================================================== */
 
     document.addEventListener(
         "keydown",
         event => {
 
+            if (event.key !== "Escape") {
+                return;
+            }
+
+
+            /* Close mobile navigation */
+
             if (
-                event.key === "Escape" &&
                 navLinks &&
                 menuToggle
             ) {
@@ -1090,15 +1428,46 @@ if (bookingForm) {
                     "active"
                 );
 
+
                 menuToggle.setAttribute(
                     "aria-expanded",
                     "false"
                 );
+
+
+                menuToggle.setAttribute(
+                    "aria-label",
+                    "Open navigation menu"
+                );
+
+            }
+
+
+            /* Close program modal */
+
+            if (
+                programModal &&
+                programModal.classList.contains(
+                    "active"
+                )
+            ) {
+
+                closeProgramModal();
 
             }
 
         }
     );
 
+
+    /* =====================================================
+       14. FINAL INITIALIZATION
+    ===================================================== */
+
+    updateBackToTop();
+
+    console.log(
+        "✅ Hasta Jothi website features initialized successfully!"
+    );
 
 });
